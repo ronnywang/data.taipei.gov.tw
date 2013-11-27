@@ -1,6 +1,7 @@
 <?php
 
 include(__DIR__ . '/Big52003.php');
+ini_set('memory_limit', '2048m');
 
 class Updater
 {
@@ -52,21 +53,31 @@ class Updater
             $url = $shpfile->geojson_api . '&source_srs=' . urlencode($source_srs);
             error_log($url);
             $curl = curl_init($url);
+            $download_fp = tmpfile();
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            $content = curl_exec($curl);
-            if (strtolower($encoding) == 'big5') {
-                $content = str_replace('\\\\', '\\', $content);
-                $content = iconv('UTF-8', 'UTF-8//IGNORE', Big52003::iconv($content));
-            }
-            if (!$ret = json_decode($content) or $ret->error) {
-                print_r(curl_getinfo($curl));
-                file_put_contents('error', $content);
-                throw new Exception("取得 {$file_url} shp {$shpfile->file} 失敗: " . $ret->message);
-            }
+            curl_setopt($curl, CURLOPT_FILE, $download_fp);
+            curl_exec($curl);
+            curl_close($curl);
+            fflush($download_fp);
+
             $file_name = preg_replace_callback('/#U([0-9a-f]*)/', function($e){
                 return mb_convert_encoding('&#' . hexdec($e[1]) . ';','UTF-8', 'HTML-ENTITIES');
             }, substr($shpfile->file, 0, -4));
-            file_put_contents($target_dir . '/' . $file_name . '.json', json_encode($ret));
+            $target_file = $target_dir . '/' . $file_name . '.json';
+
+            if (strtolower($encoding) == 'big5') {
+                $cmd = ("sed -i " . escapeshellarg('s/\\\\\\\\/\\\\/') . ' ' . escapeshellarg(stream_get_meta_data($download_fp)['uri']));
+                exec($cmd);
+                exec("piconv -f Big5 < " . escapeshellarg(stream_get_meta_data($download_fp)['uri']) . ' > ' . escapeshellarg($target_file));
+            } else {
+                rename(stream_get_meta_data($download_fp)['uri'], $target_file);
+            }
+
+            $cmd = "node " . escapeshellarg(__DIR__ . '/geojson_parse.js') . " get_type " . escapeshellarg($target_file);
+            exec($cmd, $outputs, $ret);
+            if ($ret) {
+                throw new Exception("取得 {$file_url} JSON 格式錯誤: " . $ret->message);
+            }
         }
     }
 
