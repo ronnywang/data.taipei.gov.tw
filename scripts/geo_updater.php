@@ -67,7 +67,7 @@ class Updater
             mkdir(dirname($target_file), 0777, true);
 
             if (strtolower($encoding) == 'big5') {
-                $cmd = ("sed -i " . escapeshellarg('s/\\\\\\\\/\\\\/g') . ' ' . escapeshellarg(stream_get_meta_data($download_fp)['uri']));
+                $cmd = ("env LC_ALL=C sed -i " . escapeshellarg('s/\([\x81-\xFE]\\\\\)\\\\/\1/g') . ' ' . escapeshellarg(stream_get_meta_data($download_fp)['uri']));
                 exec($cmd);
                 exec("piconv -f Big5 < " . escapeshellarg(stream_get_meta_data($download_fp)['uri']) . ' > ' . escapeshellarg($target_file));
             } else {
