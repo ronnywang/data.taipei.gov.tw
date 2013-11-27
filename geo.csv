@@ -1,4 +1,5 @@
-資料夾,資料名稱,資料網址,原始座標,最後更新時間
-TpeMRTStations,臺北都會區大眾捷運系統車站點位圖,http://data.taipei.gov.tw/opendata/apply/NewDataContent?oid=47AB5A0B-FA22-43D4-8446-3C7C6AA6DCCE,twd97,2013/11/01
-TpeMRTRoutes,臺北都會區大眾捷運系統路網圖,http://data.taipei.gov.tw/opendata/apply/NewDataContent?oid=6AF5BB5B-07BB-45D0-81F1-9AA33753ECF1,twd97,2013/11/01
-積水紀錄圖,臺北市歷年積水紀錄圖,http://data.taipei.gov.tw/opendata/apply/NewDataContent?oid=40BA1C7B-70FF-429F-9D0C-6ACFBFB3E6A2,twd97,2013/01/22
+資料夾,資料名稱,資料網址,原始座標,原始編碼,最後更新時間
+TpeMRTStations,臺北都會區大眾捷運系統車站點位圖,http://data.taipei.gov.tw/opendata/apply/NewDataContent?oid=47AB5A0B-FA22-43D4-8446-3C7C6AA6DCCE,twd97,UTF-8,2013/11/01
+TpeMRTRoutes,臺北都會區大眾捷運系統路網圖,http://data.taipei.gov.tw/opendata/apply/NewDataContent?oid=6AF5BB5B-07BB-45D0-81F1-9AA33753ECF1,twd97,UTF-8,2013/11/01
+積水紀錄圖,臺北市歷年積水紀錄圖,http://data.taipei.gov.tw/opendata/apply/NewDataContent?oid=40BA1C7B-70FF-429F-9D0C-6ACFBFB3E6A2,twd97,UTF-8,2013/01/22
+臺北市機車優先道,臺北市機車優先道,http://data.taipei.gov.tw/opendata/apply/NewDataContent?oid=735B54E5-5147-42FE-A5BD-2F015F27B6DA,twd97,Big5,2013/05/22
