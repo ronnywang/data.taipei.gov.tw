@@ -55,7 +55,7 @@ class Updater
             if (!$ret = json_decode($ret) or $ret->error) {
                 throw new Exception("取得 {$file_url} shp {$shpfile->file} 失敗: " . $ret->message);
             }
-            file_put_contents($target_dir . '/' . substr($shpfile->file, 0, -4) . '.json', $ret);
+            file_put_contents($target_dir . '/' . substr($shpfile->file, 0, -4) . '.json', json_encode($ret));
         }
     }
 
