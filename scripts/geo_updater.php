@@ -1,5 +1,7 @@
 <?php
 
+include(__DIR__ . '/Big52003.php');
+
 class Updater
 {
     public function getInfoFromURL($url)
@@ -53,9 +55,11 @@ class Updater
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             $content = curl_exec($curl);
             if (strtolower($encoding) == 'big5') {
-                $content = str_replace('\\', '', iconv('Big5', 'UTF-8', $content));
+                $content = str_replace('\\\\', '\\', $content);
+                $content = iconv('UTF-8', 'UTF-8//IGNORE', Big52003::iconv($content));
             }
             if (!$ret = json_decode($content) or $ret->error) {
+                print_r(curl_getinfo($curl));
                 file_put_contents('error', $content);
                 throw new Exception("取得 {$file_url} shp {$shpfile->file} 失敗: " . $ret->message);
             }
