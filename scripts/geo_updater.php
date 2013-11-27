@@ -63,7 +63,10 @@ class Updater
                 file_put_contents('error', $content);
                 throw new Exception("取得 {$file_url} shp {$shpfile->file} 失敗: " . $ret->message);
             }
-            file_put_contents($target_dir . '/' . substr($shpfile->file, 0, -4) . '.json', json_encode($ret));
+            $file_name = preg_replace_callback('/#U([0-9a-f]*)/', function($e){
+                return mb_convert_encoding('&#' . hexdec($e[1]) . ';','UTF-8', 'HTML-ENTITIES');
+            }, substr($shpfile->file, 0, -4));
+            file_put_contents($target_dir . '/' . $file_name . '.json', json_encode($ret));
         }
     }
 
