@@ -64,6 +64,7 @@ class Updater
                 return mb_convert_encoding('&#' . hexdec($e[1]) . ';','UTF-8', 'HTML-ENTITIES');
             }, substr($shpfile->file, 0, -4));
             $target_file = $target_dir . '/' . $file_name . '.json';
+            mkdir(dirname($target_file), 0777, true);
 
             if (strtolower($encoding) == 'big5') {
                 $cmd = ("sed -i " . escapeshellarg('s/\\\\\\\\/\\\\/') . ' ' . escapeshellarg(stream_get_meta_data($download_fp)['uri']));
