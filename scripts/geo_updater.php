@@ -24,7 +24,7 @@ class Updater
         return $ret;
     }
 
-    public function downloadFromURL($file_url, $folder, $source_srs)
+    public function downloadFromURL($file_url, $folder, $source_srs, $encoding)
     {
         $url = 'http://shp2json.ronny.tw/api/downloadurl?url=' . urlencode($file_url);
         $curl = curl_init($url);
@@ -51,8 +51,12 @@ class Updater
             error_log($url);
             $curl = curl_init($url);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            $ret = curl_exec($curl);
-            if (!$ret = json_decode($ret) or $ret->error) {
+            $content = curl_exec($curl);
+            if (strtolower($encoding) == 'big5') {
+                $content = str_replace('\\', '', iconv('Big5', 'UTF-8', $content));
+            }
+            if (!$ret = json_decode($content) or $ret->error) {
+                file_put_contents('error', $content);
                 throw new Exception("取得 {$file_url} shp {$shpfile->file} 失敗: " . $ret->message);
             }
             file_put_contents($target_dir . '/' . substr($shpfile->file, 0, -4) . '.json', json_encode($ret));
@@ -67,15 +71,15 @@ class Updater
         fputcsv($fp_new, $columns);
 
         while ($row = fgetcsv($fp)) {
-            list($folder, $name, $url, $srs, $updated_at) = $row;
+            list($folder, $name, $url, $srs, $origin_encoding, $updated_at) = $row;
 
             $info = $this->getInfoFromURL($url);
             if ($updated_at != $info->updated_at) {
-                $this->downloadFromURL($info->link, $folder, $srs);
+                $this->downloadFromURL($info->link, $folder, $srs, $origin_encoding);
                 $updated_at = $info->updated_at;
             }
 
-            fputcsv($fp_new, array($folder, $name, $url, $srs, $updated_at));
+            fputcsv($fp_new, array($folder, $name, $url, $srs, $origin_encoding, $updated_at));
         }
         fclose($fp_new);
         rename(__DIR__ . '/../geo_new.csv', __DIR__ . '/../geo.csv');
